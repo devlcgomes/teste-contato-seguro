@@ -2,22 +2,34 @@ import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 
-const LoginContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  background-color: #f5f5f5;
-`;
-
 const LoginBox = styled.div`
-  background: white;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 400px;
+`;
+
+const Logo = styled.div`
+  width: 60px;
+  height: 60px;
+  background: #ff6b00;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  color: white;
+  font-size: 24px;
+`;
+
+const LoginSection = styled.div`
+  background: white;
+  padding: 2rem 4rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+`;
+
+const ContentSection = styled.div`
+  background: #f5f5f5;
 `;
 
 const Form = styled.form`
@@ -28,109 +40,200 @@ const Form = styled.form`
 
 const Title = styled.h1`
   color: #333;
+  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
+`;
+
+const Subtitle = styled.p`
+  color: #666;
   margin-bottom: 1.5rem;
-  text-align: center;
-`;
-
-const FormGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-`;
-
-const Label = styled.label`
-  font-weight: 500;
-  color: #444;
+  font-size: 0.9rem;
 `;
 
 const Input = styled.input`
   padding: 0.75rem;
   border: 1px solid #ddd;
   border-radius: 4px;
-  font-size: 1rem;
+  font-size: 0.9rem;
+  width: 100%;
+  margin-bottom: 1rem;
 
-  &:focus {
-    outline: none;
-    border-color: #4CAF50;
+  &::placeholder {
+    color: #999;
+  }
+`;
+
+const RememberContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+`;
+
+const CheckboxLabel = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #666;
+`;
+
+const ForgotPassword = styled.a`
+  color: #0066cc;
+  text-decoration: none;
+  
+  &:hover {
+    text-decoration: underline;
   }
 `;
 
 const Button = styled.button`
   padding: 0.75rem;
-  background: #4CAF50;
+  background: #ff6b00;
   color: white;
   border: none;
   border-radius: 4px;
   font-size: 1rem;
   cursor: pointer;
-  margin-top: 1rem;
+  width: 100%;
+  margin-bottom: 1rem;
 
   &:hover {
-    background: #45a049;
+    background: #ff5500;
   }
 `;
 
-const ErrorMessage = styled.span`
-  color: #ff4444;
+const Divider = styled.div`
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 1rem 0;
+  color: #666;
+  font-size: 0.9rem;
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #ddd;
+  }
+
+  &::before {
+    margin-right: 0.5rem;
+  }
+
+  &::after {
+    margin-left: 0.5rem;
+  }
+`;
+
+const SocialButtonsContainer = styled.div`
+  display: flex;
+  gap: 10px;
+  margin-bottom: 1rem;
+`;
+
+const SocialButton = styled.button<{ $provider: 'google' | 'facebook' }>`
+  flex: 1;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: white;
+  color: #333;
   font-size: 0.875rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+
+  &:hover {
+    background: ${props => props.$provider === 'google' ? '#f8f8f8' : '#f0f2f5'};
+  }
+`;
+
+const SignUpText = styled.p`
+  color: #666;
+  font-size: 0.9rem;
+  margin-top: 1rem;
+
+  a {
+    color: #0066cc;
+    text-decoration: none;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 `;
 
 interface LoginFormData {
   email: string;
   password: string;
+  remember?: boolean;
 }
 
 export function LoginForm() {
-  const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>();
+  const { register, handleSubmit } = useForm<LoginFormData>();
   const navigate = useNavigate();
 
   const onSubmit = (data: LoginFormData) => {
-    // Simplificando a autenticação: apenas salva o email e redireciona
     localStorage.setItem('isAuthenticated', 'true');
     localStorage.setItem('userEmail', data.email);
+    if (data.remember) {
+      localStorage.setItem('rememberMe', 'true');
+    }
     navigate('/dashboard');
   };
 
   return (
-    <LoginContainer>
-      <LoginBox>
-        <Title>Acesso ao Sistema</Title>
-        <Form onSubmit={handleSubmit(onSubmit)}>
-          <FormGroup>
-            <Label>Email</Label>
-            <Input
-              type="email"
-              {...register('email', { 
-                required: 'Email é obrigatório',
-                pattern: {
-                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                  message: 'Digite um email válido'
-                }
-              })}
-              placeholder="seu@email.com"
+    <LoginBox>
+      <Logo>📚</Logo>
+      <Title>Seja bem-vindo!</Title>
+      <Subtitle>Insira suas credenciais para acessar a plataforma</Subtitle>
+      
+      <Form onSubmit={handleSubmit(onSubmit)}>
+        <Input
+          type="email"
+          placeholder="Insira seu email"
+          {...register('email', { required: true })}
+        />
+        
+        <Input
+          type="password"
+          placeholder="Insira sua senha"
+          {...register('password', { required: true })}
+        />
+        
+        <RememberContainer>
+          <CheckboxLabel>
+            <input
+              type="checkbox"
+              {...register('remember')}
             />
-            {errors.email && <ErrorMessage>{errors.email.message}</ErrorMessage>}
-          </FormGroup>
+            Manter conectado por 30 dias
+          </CheckboxLabel>
+          <ForgotPassword href="#">Esqueceu sua senha?</ForgotPassword>
+        </RememberContainer>
 
-          <FormGroup>
-            <Label>Senha</Label>
-            <Input
-              type="password"
-              {...register('password', { 
-                required: 'Senha é obrigatória',
-                minLength: {
-                  value: 4,
-                  message: 'A senha deve ter no mínimo 4 caracteres'
-                }
-              })}
-              placeholder="Sua senha"
-            />
-            {errors.password && <ErrorMessage>{errors.password.message}</ErrorMessage>}
-          </FormGroup>
+        <Button type="submit">Entrar</Button>
 
-          <Button type="submit">Entrar</Button>
-        </Form>
-      </LoginBox>
-    </LoginContainer>
+        <Divider>Ou</Divider>
+
+        <SocialButtonsContainer>
+          <SocialButton $provider="google" type="button">
+            Google
+          </SocialButton>
+          
+          <SocialButton $provider="facebook" type="button">
+            Facebook
+          </SocialButton>
+        </SocialButtonsContainer>
+
+        <SignUpText>
+          Não tem uma conta? <a href="#">Cadastre-se</a>
+        </SignUpText>
+      </Form>
+    </LoginBox>
   );
 } 
