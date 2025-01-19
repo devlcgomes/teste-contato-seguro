@@ -1,3 +1,4 @@
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useState } from 'react'
 import styled from 'styled-components'
 import { DataProvider } from './contexts/DataContext'
@@ -7,6 +8,9 @@ import { Modal } from './components/Modal'
 import { AuthorForm } from './components/AuthorForm'
 import { BookForm } from './components/BookForm'
 import { GlobalStyles } from './styles/GlobalStyles'
+import { LoginForm } from './components/LoginForm'
+import { PrivateRoute } from './components/PrivateRoute'
+import { Dashboard } from './pages/Dashboard'
 
 const Container = styled.div`
   max-width: 1200px;
@@ -56,48 +60,23 @@ function App() {
   const [isBookModalOpen, setIsBookModalOpen] = useState(false)
 
   return (
-    <DataProvider>
-      <GlobalStyles />
-      <Container>
-        <Header>
-          <Title>Gerenciador de Livros</Title>
-          <ButtonContainer>
-            <Button onClick={() => setIsAuthorModalOpen(true)}>
-              Novo Autor
-            </Button>
-            <Button onClick={() => setIsBookModalOpen(true)}>
-              Novo Livro
-            </Button>
-          </ButtonContainer>
-        </Header>
-
-        <Section>
-          <SectionTitle>Autores</SectionTitle>
-          <AuthorTable />
-        </Section>
-
-        <Section>
-          <SectionTitle>Livros</SectionTitle>
-          <BookTable />
-        </Section>
-
-        <Modal
-          title="Novo Autor"
-          open={isAuthorModalOpen}
-          onOpenChange={setIsAuthorModalOpen}
-        >
-          <AuthorForm onSuccess={() => setIsAuthorModalOpen(false)} />
-        </Modal>
-
-        <Modal
-          title="Novo Livro"
-          open={isBookModalOpen}
-          onOpenChange={setIsBookModalOpen}
-        >
-          <BookForm onSuccess={() => setIsBookModalOpen(false)} />
-        </Modal>
-      </Container>
-    </DataProvider>
+    <BrowserRouter>
+      <DataProvider>
+        <GlobalStyles />
+        <Routes>
+          <Route path="/login" element={<LoginForm />} />
+          <Route
+            path="/dashboard"
+            element={
+              <PrivateRoute>
+                <Dashboard />
+              </PrivateRoute>
+            }
+          />
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        </Routes>
+      </DataProvider>
+    </BrowserRouter>
   )
 }
 
