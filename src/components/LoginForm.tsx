@@ -20,22 +20,11 @@ const Logo = styled.div`
   font-size: 24px;
 `;
 
-const LoginSection = styled.div`
-  background: white;
-  padding: 2rem 4rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-`;
-
-const ContentSection = styled.div`
-  background: #f5f5f5;
-`;
 
 const Form = styled.form`
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.50rem;
 `;
 
 const Title = styled.h1`
@@ -56,7 +45,7 @@ const Input = styled.input`
   border-radius: 4px;
   font-size: 0.9rem;
   width: 100%;
-  margin-bottom: 1rem;
+  margin-bottom: 0.50rem;
 
   &::placeholder {
     color: #999;
@@ -67,7 +56,7 @@ const RememberContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 0.50rem;
   font-size: 0.9rem;
 `;
 
@@ -96,7 +85,6 @@ const Button = styled.button`
   font-size: 1rem;
   cursor: pointer;
   width: 100%;
-  margin-bottom: 1rem;
 
   &:hover {
     background: #ff5500;
@@ -107,7 +95,7 @@ const Divider = styled.div`
   display: flex;
   align-items: center;
   text-align: center;
-  margin: 1rem 0;
+  margin: 0.50rem 0;
   color: #666;
   font-size: 0.9rem;
 

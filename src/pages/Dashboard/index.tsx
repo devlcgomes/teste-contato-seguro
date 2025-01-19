@@ -1,76 +1,114 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { AuthorTable } from '../../components/AuthorTable';
-import { BookTable } from '../../components/BookTable';
 import { Modal } from '../../components/Modal';
 import { AuthorForm } from '../../components/AuthorForm';
 import { BookForm } from '../../components/BookForm';
+import { DashboardContent } from '../../components/DashboardContent';
+import { useDashboard } from '../../hooks/useDashboard';
 import {
   Container,
+  Content,
+  Sidebar,
+  SidebarItem,
+  MainContent,
   Header,
   Title,
-  ButtonContainer,
-  Button,
-  LogoutButton,
-  Section,
-  SectionTitle
 } from './styles';
+import { 
+  FiHome, 
+  FiUsers, 
+  FiBook, 
+  FiBarChart2, 
+  FiSettings,
+  FiLogOut 
+} from 'react-icons/fi';
 
 export function Dashboard() {
-  const [isAuthorModalOpen, setIsAuthorModalOpen] = useState(false);
-  const [isBookModalOpen, setIsBookModalOpen] = useState(false);
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    localStorage.removeItem('isAuthenticated');
-    localStorage.removeItem('userEmail');
-    navigate('/login');
-  };
+  const {
+    activeSection,
+    setActiveSection,
+    isAuthorModalOpen,
+    isBookModalOpen,
+    handleOpenAuthorModal,
+    handleCloseAuthorModal,
+    handleOpenBookModal,
+    handleCloseBookModal,
+    handleLogout,
+    userEmail,
+    chartData
+  } = useDashboard();
 
   return (
     <Container>
-      <Header>
+      <Sidebar>
         <div>
-          <Title>Gerenciador de Livros</Title>
-          <p>Bem-vindo, {localStorage.getItem('userEmail')}</p>
+          <Title>BookManager</Title>
+          <SidebarItem 
+            active={activeSection === 'home'} 
+            onClick={() => setActiveSection('home')}
+          >
+            <FiHome /> Início
+          </SidebarItem>
+          <SidebarItem 
+            active={activeSection === 'authors'} 
+            onClick={() => setActiveSection('authors')}
+          >
+            <FiUsers /> Autores
+          </SidebarItem>
+          <SidebarItem 
+            active={activeSection === 'books'} 
+            onClick={() => setActiveSection('books')}
+          >
+            <FiBook /> Livros
+          </SidebarItem>
+          <SidebarItem 
+            active={activeSection === 'stats'} 
+            onClick={() => setActiveSection('stats')}
+          >
+            <FiBarChart2 /> Estatísticas
+          </SidebarItem>
+          <SidebarItem 
+            active={activeSection === 'settings'} 
+            onClick={() => setActiveSection('settings')}
+          >
+            <FiSettings /> Configurações
+          </SidebarItem>
         </div>
-        <ButtonContainer>
-          <Button onClick={() => setIsAuthorModalOpen(true)}>
-            Novo Autor
-          </Button>
-          <Button onClick={() => setIsBookModalOpen(true)}>
-            Novo Livro
-          </Button>
-          <LogoutButton onClick={handleLogout}>
-            Sair
-          </LogoutButton>
-        </ButtonContainer>
-      </Header>
+        <SidebarItem onClick={handleLogout}>
+          <FiLogOut /> Sair
+        </SidebarItem>
+      </Sidebar>
 
-      <Section>
-        <SectionTitle>Autores</SectionTitle>
-        <AuthorTable />
-      </Section>
+      <Content>
+        <Header>
+          <div>
+            <h2>{activeSection.charAt(0).toUpperCase() + activeSection.slice(1)}</h2>
+            <p>Bem-vindo, {userEmail}</p>
+          </div>
+        </Header>
 
-      <Section>
-        <SectionTitle>Livros</SectionTitle>
-        <BookTable />
-      </Section>
+        <MainContent>
+          <DashboardContent
+            activeSection={activeSection}
+            onOpenAuthorModal={handleOpenAuthorModal}
+            onOpenBookModal={handleOpenBookModal}
+            chartData={chartData}
+          />
+        </MainContent>
+      </Content>
 
       <Modal
         title="Novo Autor"
         open={isAuthorModalOpen}
-        onOpenChange={setIsAuthorModalOpen}
+        onOpenChange={handleCloseAuthorModal}
       >
-        <AuthorForm onSuccess={() => setIsAuthorModalOpen(false)} />
+        <AuthorForm onSuccess={handleCloseAuthorModal} />
       </Modal>
 
       <Modal
         title="Novo Livro"
         open={isBookModalOpen}
-        onOpenChange={setIsBookModalOpen}
+        onOpenChange={handleCloseBookModal}
       >
-        <BookForm onSuccess={() => setIsBookModalOpen(false)} />
+        <BookForm onSuccess={handleCloseBookModal} />
       </Modal>
     </Container>
   );
